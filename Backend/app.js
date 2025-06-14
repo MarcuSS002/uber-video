@@ -12,7 +12,10 @@ const rideRoutes = require('./routes/ride.routes');
 
 connectToDb();
 
-app.use(cors());
+
+app.use(cors({
+    origin: "http://localhost:5173" // Frontend URL
+  }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
@@ -24,9 +27,9 @@ app.get('/', (req, res) => {
 });
 
 app.use('/users', userRoutes);
-app.use('/captains', captainRoutes);
+app.use('/captain', captainRoutes);
 app.use('/maps', mapsRoutes);
-app.use('/rides', rideRoutes);
+app.use('/ride', rideRoutes);
 
 
 

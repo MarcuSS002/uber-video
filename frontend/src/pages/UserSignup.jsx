@@ -22,32 +22,33 @@ const UserSignup = () => {
 
 
   const submitHandler = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
     const newUser = {
       fullname: {
         firstname: firstName,
-        lastname: lastName
+        lastname: lastName,
       },
       email: email,
-      password: password
+      password: password,
+    };
+
+    try {
+      const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/users/register`, newUser);
+      if (response.status === 201) {
+        const data = response.data;
+        setUser(data.user);
+        localStorage.setItem('token', data.token);
+        navigate('/home');
+      }
+    } catch (error) {
+      console.error('Error connecting to backend:', error);
     }
 
-    const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/users/register`, newUser)
-
-    if (response.status === 201) {
-      const data = response.data
-      setUser(data.user)
-      localStorage.setItem('token', data.token)
-      navigate('/home')
-    }
-
-
-    setEmail('')
-    setFirstName('')
-    setLastName('')
-    setPassword('')
-
-  }
+    setEmail('');
+    setFirstName('');
+    setLastName('');
+    setPassword('');
+  };
   return (
     <div>
       <div className='p-7 h-screen flex flex-col justify-between'>

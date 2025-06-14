@@ -4,7 +4,6 @@ const { body, query } = require('express-validator');
 const rideController = require('../controllers/ride.controller');
 const authMiddleware = require('../middlewares/auth.middleware');
 
-
 router.post('/create',
     authMiddleware.authUser,
     body('pickup').isString().isLength({ min: 3 }).withMessage('Invalid pickup address'),
@@ -39,6 +38,10 @@ router.post('/end-ride',
     rideController.endRide
 )
 
-
+// Example route for ride API
+router.get('/status', (req, res) => {
+    res.status(200).json({ message: 'Ride status retrieved successfully' });
+});
 
 module.exports = router;
+

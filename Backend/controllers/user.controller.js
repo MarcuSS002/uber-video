@@ -4,34 +4,33 @@ const { validationResult } = require('express-validator');
 const blackListTokenModel = require('../models/blackListToken.model');
 
 module.exports.registerUser = async (req, res, next) => {
-
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
     }
-
-    const { fullname, email, password } = req.body;
-
-    const isUserAlready = await userModel.findOne({ email });
-
-    if (isUserAlready) {
-        return res.status(400).json({ message: 'User already exist' });
+    try {
+        const { fullname, email, password } = req.body;
+        if (!fullname || !fullname.firstname || !email || !password) {
+            return res.status(400).json({ message: 'All fields are required' });
+        }
+        const isUserAlready = await userModel.findOne({ email });
+        if (isUserAlready) {
+            return res.status(400).json({ message: 'User already exists' });
+        }
+        const hashedPassword = await userModel.hashPassword(password);
+        const user = await userModel.create({
+            fullname: {
+                firstname: fullname.firstname,
+                lastname: fullname.lastname || ''
+            },
+            email,
+            password: hashedPassword
+        });
+        const token = user.generateAuthToken();
+        res.status(201).json({ token, user });
+    } catch (err) {
+        res.status(500).json({ message: 'Registration failed', error: err.message });
     }
-
-    const hashedPassword = await userModel.hashPassword(password);
-
-    const user = await userService.createUser({
-        firstname: fullname.firstname,
-        lastname: fullname.lastname,
-        email,
-        password: hashedPassword
-    });
-
-    const token = user.generateAuthToken();
-
-    res.status(201).json({ token, user });
-
-
 }
 
 module.exports.loginUser = async (req, res, next) => {
@@ -76,4 +75,25 @@ module.exports.logoutUser = async (req, res, next) => {
 
     res.status(200).json({ message: 'Logged out' });
 
+}
+
+module.exports.updateUserProfile = async (req, res, next) => {
+    try {
+        const userId = req.user?._id;
+        if (!userId) {
+            return res.status(401).json({ message: 'Unauthorized' });
+        }
+        const { fullname, email } = req.body;
+        const update = {};
+        if (fullname) update['fullname'] = fullname;
+        if (email) update['email'] = email;
+        const updatedUser = await userModel.findByIdAndUpdate(
+            userId,
+            { $set: update },
+            { new: true }
+        );
+        res.status(200).json({ user: updatedUser });
+    } catch (err) {
+        res.status(500).json({ message: 'Failed to update profile', error: err.message });
+    }
 }
