@@ -13,9 +13,18 @@ const rideRoutes = require('./routes/ride.routes');
 connectToDb();
 
 
+const allowedOrigins = process.env.CORS_ORIGIN.split(',');
 app.use(cors({
-    origin: "http://localhost:5173" // Frontend URL
-  }));
+  origin: function(origin, callback) {
+    // allow requests with no origin (like mobile apps, curl, etc.)
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());

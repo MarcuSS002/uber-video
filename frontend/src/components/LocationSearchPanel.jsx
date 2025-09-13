@@ -1,6 +1,6 @@
-import React from 'react'
+import PropTypes from 'prop-types';
 
-const LocationSearchPanel = ({ suggestions, setVehiclePanel, setPanelOpen, setPickup, setDestination, activeField }) => {
+const LocationSearchPanel = ({ suggestions, setPickup, setDestination, activeField }) => {
 
     const handleSuggestionClick = (suggestion) => {
         if (activeField === 'pickup') {
@@ -8,8 +8,6 @@ const LocationSearchPanel = ({ suggestions, setVehiclePanel, setPanelOpen, setPi
         } else if (activeField === 'destination') {
             setDestination(suggestion)
         }
-        // setVehiclePanel(true)
-        // setPanelOpen(false)
     }
 
     return (
@@ -26,5 +24,12 @@ const LocationSearchPanel = ({ suggestions, setVehiclePanel, setPanelOpen, setPi
         </div>
     )
 }
+
+LocationSearchPanel.propTypes = {
+    suggestions: PropTypes.arrayOf(PropTypes.string).isRequired,
+    setPickup: PropTypes.func.isRequired,
+    setDestination: PropTypes.func.isRequired,
+    activeField: PropTypes.string.isRequired
+};
 
 export default LocationSearchPanel

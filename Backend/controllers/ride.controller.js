@@ -13,33 +13,45 @@ module.exports.createRide = async (req, res) => {
 
     const { userId, pickup, destination, vehicleType } = req.body;
 
+    if (!req.user || !req.user._id) {
+        return res.status(401).json({ message: 'User not authenticated' });
+    }
+
     try {
         const ride = await rideService.createRide({ user: req.user._id, pickup, destination, vehicleType });
-        res.status(201).json(ride);
 
+        // Validate pickup coordinates
         const pickupCoordinates = await mapService.getAddressCoordinate(pickup);
-
-
+        if (
+            !pickupCoordinates ||
+            typeof pickupCoordinates.ltd !== 'number' ||
+            typeof pickupCoordinates.lng !== 'number' ||
+            isNaN(pickupCoordinates.ltd) ||
+            isNaN(pickupCoordinates.lng)
+        ) {
+            return res.status(400).json({ message: 'Invalid pickup coordinates' });
+        }
 
         const captainsInRadius = await mapService.getCaptainsInTheRadius(pickupCoordinates.ltd, pickupCoordinates.lng, 2);
 
-        ride.otp = ""
+        ride.otp = "";
 
         const rideWithUser = await rideModel.findOne({ _id: ride._id }).populate('user');
 
         captainsInRadius.map(captain => {
-
             sendMessageToSocketId(captain.socketId, {
                 event: 'new-ride',
                 data: rideWithUser
-            })
+            });
+        });
 
-        })
-
+        // Only send response once, after all logic
+        return res.status(201).json(ride);
     } catch (err) {
-
         console.log(err);
-        return res.status(500).json({ message: err.message });
+        if (!res.headersSent) {
+            return res.status(500).json({ message: err.message });
+        }
     }
 
 };
@@ -67,6 +79,10 @@ module.exports.confirmRide = async (req, res) => {
     }
 
     const { rideId } = req.body;
+    const mongoose = require('mongoose');
+    if (!rideId || !mongoose.Types.ObjectId.isValid(rideId)) {
+        return res.status(400).json({ errors: [{ type: 'field', msg: 'Invalid ride id', path: 'rideId', location: 'body' }] });
+    }
 
     try {
         const ride = await rideService.confirmRide({ rideId, captain: req.captain });
@@ -74,11 +90,10 @@ module.exports.confirmRide = async (req, res) => {
         sendMessageToSocketId(ride.user.socketId, {
             event: 'ride-confirmed',
             data: ride
-        })
+        });
 
         return res.status(200).json(ride);
     } catch (err) {
-
         console.log(err);
         return res.status(500).json({ message: err.message });
     }
@@ -91,6 +106,10 @@ module.exports.startRide = async (req, res) => {
     }
 
     const { rideId, otp } = req.query;
+    const mongoose = require('mongoose');
+    if (!rideId || !mongoose.Types.ObjectId.isValid(rideId)) {
+        return res.status(400).json({ errors: [{ type: 'field', msg: 'Invalid ride id', path: 'rideId', location: 'query' }] });
+    }
 
     try {
         const ride = await rideService.startRide({ rideId, otp, captain: req.captain });
@@ -100,7 +119,7 @@ module.exports.startRide = async (req, res) => {
         sendMessageToSocketId(ride.user.socketId, {
             event: 'ride-started',
             data: ride
-        })
+        });
 
         return res.status(200).json(ride);
     } catch (err) {
@@ -115,6 +134,10 @@ module.exports.endRide = async (req, res) => {
     }
 
     const { rideId } = req.body;
+    const mongoose = require('mongoose');
+    if (!rideId || !mongoose.Types.ObjectId.isValid(rideId)) {
+        return res.status(400).json({ errors: [{ type: 'field', msg: 'Invalid ride id', path: 'rideId', location: 'body' }] });
+    }
 
     try {
         const ride = await rideService.endRide({ rideId, captain: req.captain });
@@ -122,12 +145,10 @@ module.exports.endRide = async (req, res) => {
         sendMessageToSocketId(ride.user.socketId, {
             event: 'ride-ended',
             data: ride
-        })
-
-
+        });
 
         return res.status(200).json(ride);
     } catch (err) {
         return res.status(500).json({ message: err.message });
-    } s
+    }
 }

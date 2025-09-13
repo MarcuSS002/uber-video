@@ -1,69 +1,28 @@
-import React, { useState, useEffect } from 'react'
-import { LoadScript, GoogleMap, Marker } from '@react-google-maps/api'
+// src/components/LiveTracking.jsx
+import { GoogleMap, LoadScript } from "@react-google-maps/api";
 
 const containerStyle = {
-    width: '100%',
-    height: '100%',
+  width: "100%",
+  height: "500px", // give map height
 };
 
 const center = {
-    lat: -3.745,
-    lng: -38.523
+  lat: 28.6139, // Delhi
+  lng: 77.2090,
 };
 
-const LiveTracking = () => {
-    const [ currentPosition, setCurrentPosition ] = useState(center);
-
-    useEffect(() => {
-        navigator.geolocation.getCurrentPosition((position) => {
-            const { latitude, longitude } = position.coords;
-            setCurrentPosition({
-                lat: latitude,
-                lng: longitude
-            });
-        });
-
-        const watchId = navigator.geolocation.watchPosition((position) => {
-            const { latitude, longitude } = position.coords;
-            setCurrentPosition({
-                lat: latitude,
-                lng: longitude
-            });
-        });
-
-        return () => navigator.geolocation.clearWatch(watchId);
-    }, []);
-
-    useEffect(() => {
-        const updatePosition = () => {
-            navigator.geolocation.getCurrentPosition((position) => {
-                const { latitude, longitude } = position.coords;
-
-                console.log('Position updated:', latitude, longitude);
-                setCurrentPosition({
-                    lat: latitude,
-                    lng: longitude
-                });
-            });
-        };
-
-        updatePosition(); // Initial position update
-
-        const intervalId = setInterval(updatePosition, 1000); // Update every 10 seconds
-
-    }, []);
-
-    return (
-        <LoadScript googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}>
-            <GoogleMap
-                mapContainerStyle={containerStyle}
-                center={currentPosition}
-                zoom={15}
-            >
-                <Marker position={currentPosition} />
-            </GoogleMap>
-        </LoadScript>
-    )
+function LiveTracking() {
+  return (
+    <LoadScript googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}>
+      <GoogleMap
+        mapContainerStyle={containerStyle}
+        center={center}
+        zoom={12}
+      >
+        {/* You can add markers, directions, etc. here */}
+      </GoogleMap>
+    </LoadScript>
+  );
 }
 
-export default LiveTracking
+export default LiveTracking;

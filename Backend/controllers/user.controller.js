@@ -1,5 +1,5 @@
+
 const userModel = require('../models/user.model');
-const userService = require('../services/user.service');
 const { validationResult } = require('express-validator');
 const blackListTokenModel = require('../models/blackListToken.model');
 
@@ -17,14 +17,13 @@ module.exports.registerUser = async (req, res, next) => {
         if (isUserAlready) {
             return res.status(400).json({ message: 'User already exists' });
         }
-        const hashedPassword = await userModel.hashPassword(password);
         const user = await userModel.create({
             fullname: {
                 firstname: fullname.firstname,
-                lastname: fullname.lastname || ''
+                lastname: fullname.lastname ? fullname.lastname : null
             },
             email,
-            password: hashedPassword
+            password
         });
         const token = user.generateAuthToken();
         res.status(201).json({ token, user });
@@ -48,16 +47,12 @@ module.exports.loginUser = async (req, res, next) => {
         return res.status(401).json({ message: 'Invalid email or password' });
     }
 
-    const isMatch = await user.comparePassword(password);
-
-    if (!isMatch) {
+    if (user.password !== password) {
         return res.status(401).json({ message: 'Invalid email or password' });
     }
 
     const token = user.generateAuthToken();
-
     res.cookie('token', token);
-
     res.status(200).json({ token, user });
 }
 

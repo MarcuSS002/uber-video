@@ -1,5 +1,6 @@
-import React, { useContext, useEffect, useState } from 'react'
-import { UserDataContext } from '../context/UserContext'
+import { useContext, useEffect, useState } from 'react'
+import PropTypes from 'prop-types'
+import { UserDataContext } from '../context/UserDataContext'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 
@@ -8,12 +9,13 @@ const UserProtectWrapper = ({
 }) => {
     const token = localStorage.getItem('token')
     const navigate = useNavigate()
-    const { user, setUser } = useContext(UserDataContext)
+    const { setUser } = useContext(UserDataContext)
     const [ isLoading, setIsLoading ] = useState(true)
-
     useEffect(() => {
         if (!token) {
-            navigate('/login')
+            // If no token, allow default user (forever logged in)
+            setIsLoading(false);
+            return;
         }
 
         axios.get(`${import.meta.env.VITE_BASE_URL}/users/profile`, {
@@ -29,9 +31,9 @@ const UserProtectWrapper = ({
             .catch(err => {
                 console.log(err)
                 localStorage.removeItem('token')
-                navigate('/login')
+                setIsLoading(false);
             })
-    }, [ token ])
+    }, [ token, navigate, setUser ])
 
     if (isLoading) {
         return (
@@ -44,6 +46,9 @@ const UserProtectWrapper = ({
             {children}
         </>
     )
+}
+UserProtectWrapper.propTypes = {
+    children: PropTypes.node.isRequired
 }
 
 export default UserProtectWrapper

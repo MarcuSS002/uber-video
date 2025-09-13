@@ -19,7 +19,7 @@ const CaptainSignup = () => {
   const [ vehicleType, setVehicleType ] = useState('')
 
 
-  const { captain, setCaptain } = React.useContext(CaptainDataContext)
+  const { setCaptain } = React.useContext(CaptainDataContext)
 
 
   const submitHandler = async (e) => {
@@ -67,11 +67,11 @@ const CaptainSignup = () => {
           submitHandler(e)
         }}>
 
-          <h3 className='text-lg w-full  font-medium mb-2'>What's our Captain's name</h3>
+          <h3 className='text-lg w-full font-medium mb-2'>What&#39;s our Captain&#39;s name</h3>
           <div className='flex gap-4 mb-7'>
             <input
               required
-              className='bg-[#eeeeee] w-1/2 rounded-lg px-4 py-2 border  text-lg placeholder:text-base'
+              className='bg-[#eeeeee] w-1/2 rounded-lg px-4 py-2 border text-lg placeholder:text-base'
               type="text"
               placeholder='First name'
               value={firstName}
@@ -81,7 +81,7 @@ const CaptainSignup = () => {
             />
             <input
               required
-              className='bg-[#eeeeee] w-1/2  rounded-lg px-4 py-2 border  text-lg placeholder:text-base'
+              className='bg-[#eeeeee] w-1/2 rounded-lg px-4 py-2 border text-lg placeholder:text-base'
               type="text"
               placeholder='Last name'
               value={lastName}
@@ -91,7 +91,7 @@ const CaptainSignup = () => {
             />
           </div>
 
-          <h3 className='text-lg font-medium mb-2'>What's our Captain's email</h3>
+          <h3 className='text-lg font-medium mb-2'>What&#39;s our Captain&#39;s email</h3>
           <input
             required
             value={email}

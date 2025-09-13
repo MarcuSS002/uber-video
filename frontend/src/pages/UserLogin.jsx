@@ -1,15 +1,14 @@
-import React, { useState, useContext } from 'react'
+import { useState, useContext } from 'react'
 import { Link } from 'react-router-dom'
-import { UserDataContext } from '../context/UserContext'
+import { UserDataContext } from '../context/UserDataContext'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 
 const UserLogin = () => {
   const [ email, setEmail ] = useState('')
   const [ password, setPassword ] = useState('')
-  const [ userData, setUserData ] = useState({})
 
-  const { user, setUser } = useContext(UserDataContext)
+  const { setUser } = useContext(UserDataContext)
   const navigate = useNavigate()
 
 
@@ -22,18 +21,22 @@ const UserLogin = () => {
       password: password
     }
 
-    const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/users/login`, userData)
-
-    if (response.status === 200) {
-      const data = response.data
-      setUser(data.user)
-      localStorage.setItem('token', data.token)
-      navigate('/home')
+    try {
+      const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/users/login`, userData);
+      if (response.data && response.data.user && response.data.token) {
+        setUser(response.data.user);
+        localStorage.setItem('token', response.data.token);
+        localStorage.setItem('user', JSON.stringify(response.data.user));
+        navigate('/home');
+      } else {
+        alert('Login failed. Please check your credentials.');
+      }
+    } catch (error) {
+      alert(error.response?.data?.message || 'Login failed. Please try again.');
     }
 
-
-    setEmail('')
-    setPassword('')
+    setEmail('');
+    setPassword('');
   }
 
   return (
@@ -44,7 +47,7 @@ const UserLogin = () => {
         <form onSubmit={(e) => {
           submitHandler(e)
         }}>
-          <h3 className='text-lg font-medium mb-2'>What's your email</h3>
+          <h3 className='text-lg font-medium mb-2'>What is your email</h3>
           <input
             required
             value={email}
