@@ -2,14 +2,14 @@ import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
-import { CaptainDataContext } from '../context/CapatainContext'
+import { CaptainContext } from '../context/CaptainContext'
 
 const Captainlogin = () => {
 
   const [ email, setEmail ] = useState('')
   const [ password, setPassword ] = useState('')
 
-  const { captain, setCaptain } = React.useContext(CaptainDataContext)
+  const { setCaptain } = React.useContext(CaptainContext)
   const navigate = useNavigate()
 
 
@@ -43,7 +43,7 @@ const Captainlogin = () => {
         <form onSubmit={(e) => {
           submitHandler(e)
         }}>
-          <h3 className='text-lg font-medium mb-2'>What's your email</h3>
+          <h3 className='text-lg font-medium mb-2'>What&apos;s your email</h3>
           <input
             required
             value={email}

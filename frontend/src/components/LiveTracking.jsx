@@ -1,28 +1,82 @@
 // src/components/LiveTracking.jsx
-import { GoogleMap, LoadScript } from "@react-google-maps/api";
+import { useEffect, useState } from "react";
+import { MapContainer, TileLayer, Marker, Polyline } from "react-leaflet";
+import "leaflet/dist/leaflet.css";
+import PropTypes from "prop-types";
 
-const containerStyle = {
-  width: "100%",
-  height: "500px", // give map height
-};
+function LiveTracking({ pickup, destination, captainLocation }) {
+  const [routeCoords, setRouteCoords] = useState([]);
 
-const center = {
-  lat: 28.6139, // Delhi
-  lng: 77.2090,
-};
+  useEffect(() => {
+    if (!pickup || !destination) return;
 
-function LiveTracking() {
+    // ✅ Fetch route from OSRM
+    const fetchRoute = async () => {
+      try {
+        const url = `https://router.project-osrm.org/route/v1/driving/${pickup.lng},${pickup.lat};${destination.lng},${destination.lat}?geometries=geojson`;
+        const res = await fetch(url);
+        const data = await res.json();
+
+        if (data.routes?.[0]?.geometry?.coordinates) {
+          // OSRM gives [lng, lat] → convert to [lat, lng]
+          const coords = data.routes[0].geometry.coordinates.map(([lng, lat]) => [
+            lat,
+            lng,
+          ]);
+          setRouteCoords(coords);
+        }
+      } catch (err) {
+        console.error("Error fetching OSRM route:", err);
+      }
+    };
+
+    fetchRoute();
+  }, [pickup, destination]);
+
   return (
-    <LoadScript googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}>
-      <GoogleMap
-        mapContainerStyle={containerStyle}
-        center={center}
-        zoom={12}
-      >
-        {/* You can add markers, directions, etc. here */}
-      </GoogleMap>
-    </LoadScript>
+    <MapContainer
+      center={pickup ? [pickup.lat, pickup.lng] : [28.6139, 77.209]} // fallback Delhi
+      zoom={13}
+      style={{ height: "100%", width: "100%" }}
+    >
+      {/* Base map */}
+      <TileLayer
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        attribution="&copy; OpenStreetMap contributors"
+      />
+
+      {/* Pickup marker */}
+      {pickup && <Marker position={[pickup.lat, pickup.lng]} />}
+
+      {/* Destination marker */}
+      {destination && <Marker position={[destination.lat, destination.lng]} />}
+
+      {/* Captain live marker */}
+      {captainLocation && (
+        <Marker position={[captainLocation.lat, captainLocation.lng]} />
+      )}
+
+      {/* Route polyline */}
+      {routeCoords.length > 0 && (
+        <Polyline positions={routeCoords} color="blue" />
+      )}
+    </MapContainer>
   );
 }
+
+LiveTracking.propTypes = {
+  pickup: PropTypes.shape({
+    lat: PropTypes.number.isRequired,
+    lng: PropTypes.number.isRequired,
+  }),
+  destination: PropTypes.shape({
+    lat: PropTypes.number.isRequired,
+    lng: PropTypes.number.isRequired,
+  }),
+  captainLocation: PropTypes.shape({
+    lat: PropTypes.number.isRequired,
+    lng: PropTypes.number.isRequired,
+  }),
+};
 
 export default LiveTracking;

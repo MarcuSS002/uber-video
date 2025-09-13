@@ -1,4 +1,4 @@
-import React from 'react'
+import PropTypes from 'prop-types';
 
 const LookingForDriver = (props) => {
     return (
@@ -37,5 +37,13 @@ const LookingForDriver = (props) => {
         </div>
     )
 }
+
+LookingForDriver.propTypes = {
+    setVehicleFound: PropTypes.func.isRequired,
+    pickup: PropTypes.string.isRequired,
+    destination: PropTypes.string.isRequired,
+    fare: PropTypes.object.isRequired,
+    vehicleType: PropTypes.string.isRequired,
+};
 
 export default LookingForDriver

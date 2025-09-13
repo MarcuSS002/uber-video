@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { CaptainDataContext } from '../context/CapatainContext'
+import { CaptainContext } from '../context/CaptainContext'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 
@@ -19,7 +19,7 @@ const CaptainSignup = () => {
   const [ vehicleType, setVehicleType ] = useState('')
 
 
-  const { setCaptain } = React.useContext(CaptainDataContext)
+  const { setCaptain } = React.useContext(CaptainContext)
 
 
   const submitHandler = async (e) => {

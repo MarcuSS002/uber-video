@@ -1,4 +1,6 @@
-import React from 'react'
+
+
+import PropTypes from 'prop-types';
 
 const RidePopUp = (props) => {
     return (
@@ -56,5 +58,22 @@ const RidePopUp = (props) => {
         </div>
     )
 }
+
+RidePopUp.propTypes = {
+    setRidePopupPanel: PropTypes.func.isRequired,
+    setConfirmRidePopupPanel: PropTypes.func.isRequired,
+    confirmRide: PropTypes.func.isRequired,
+    ride: PropTypes.shape({
+        user: PropTypes.shape({
+            fullname: PropTypes.shape({
+                firstname: PropTypes.string.isRequired,
+                lastname: PropTypes.string.isRequired,
+            }).isRequired,
+        }).isRequired,
+        pickup: PropTypes.string.isRequired,
+        destination: PropTypes.string.isRequired,
+        fare: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+    }).isRequired,
+};
 
 export default RidePopUp
