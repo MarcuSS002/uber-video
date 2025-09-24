@@ -1,11 +1,33 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import PropTypes from "prop-types";
 
-const BookRideForm = ({ setRoute }) => {
+const BookRideForm = ({ setRoute, setShowRidePopup }) => {
   const [pickup, setPickup] = useState("");
   const [destination, setDestination] = useState("");
   const [loading, setLoading] = useState(false);
+  const [pickupSuggestions, setPickupSuggestions] = useState([]);
+  const [destinationSuggestions, setDestinationSuggestions] = useState([]);
+
+  useEffect(() => {
+    if (pickup.length > 2) {
+      axios
+        .get(`https://nominatim.openstreetmap.org/search?format=json&q=${pickup}`)
+        .then((response) => setPickupSuggestions(response.data));
+    } else {
+      setPickupSuggestions([]);
+    }
+  }, [pickup]);
+
+  useEffect(() => {
+    if (destination.length > 2) {
+      axios
+        .get(`https://nominatim.openstreetmap.org/search?format=json&q=${destination}`)
+        .then((response) => setDestinationSuggestions(response.data));
+    } else {
+      setDestinationSuggestions([]);
+    }
+  }, [destination]);
 
   const handleBookRide = async (e) => {
     e.preventDefault();
@@ -17,7 +39,6 @@ const BookRideForm = ({ setRoute }) => {
     try {
       setLoading(true);
 
-      // Convert pickup & destination text into lat/lng (using Nominatim free geocoding)
       const pickupRes = await axios.get(
         `https://nominatim.openstreetmap.org/search?format=json&q=${pickup}`
       );
@@ -40,21 +61,20 @@ const BookRideForm = ({ setRoute }) => {
         destRes.data[0].lon,
       ];
 
-      // Call OSRM route API (server.js should handle this too, but directly hitting public OSRM here)
       const osrmRes = await axios.get(
         `http://router.project-osrm.org/route/v1/driving/${pickupCoords[1]},${pickupCoords[0]};${destCoords[1]},${destCoords[0]}?overview=full&geometries=geojson`
       );
 
       const route = osrmRes.data.routes[0];
       setRoute({
-        pickup: pickupCoords,
-        destination: destCoords,
-        geometry: route.geometry,
-        distance: (route.distance / 1000).toFixed(2), // km
-        duration: (route.duration / 60).toFixed(1), // minutes
+        pickup: { lat: parseFloat(pickupCoords[0]), lng: parseFloat(pickupCoords[1]) },
+        destination: { lat: parseFloat(destCoords[0]), lng: parseFloat(destCoords[1]) },
+        coordinates: route.geometry.coordinates,
+        distance_km: (route.distance / 1000).toFixed(2),
+        duration_min: (route.duration / 60).toFixed(1),
       });
 
-      alert("Ride booked! Route displayed on map 🚗");
+      setShowRidePopup(true);
     } catch (err) {
       console.error(err);
       alert("Error booking ride. Please try again.");
@@ -70,21 +90,57 @@ const BookRideForm = ({ setRoute }) => {
     >
       <h2 className="text-lg font-semibold mb-3">Book a Ride</h2>
 
-      <input
-        type="text"
-        placeholder="Enter pickup location"
-        value={pickup}
-        onChange={(e) => setPickup(e.target.value)}
-        className="w-full p-2 mb-2 border rounded-lg"
-      />
+      <div className="relative">
+        <input
+          type="text"
+          placeholder="Enter pickup location"
+          value={pickup}
+          onChange={(e) => setPickup(e.target.value)}
+          className="w-full p-2 mb-2 border rounded-lg"
+        />
+        {pickupSuggestions.length > 0 && (
+          <ul className="absolute bg-white border rounded-lg w-full mt-1">
+            {pickupSuggestions.map((suggestion) => (
+              <li
+                key={suggestion.place_id}
+                onClick={() => {
+                  setPickup(suggestion.display_name);
+                  setPickupSuggestions([]);
+                }}
+                className="p-2 cursor-pointer hover:bg-gray-200"
+              >
+                {suggestion.display_name}
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
 
-      <input
-        type="text"
-        placeholder="Enter destination"
-        value={destination}
-        onChange={(e) => setDestination(e.target.value)}
-        className="w-full p-2 mb-3 border rounded-lg"
-      />
+      <div className="relative">
+        <input
+          type="text"
+          placeholder="Enter destination"
+          value={destination}
+          onChange={(e) => setDestination(e.target.value)}
+          className="w-full p-2 mb-3 border rounded-lg"
+        />
+        {destinationSuggestions.length > 0 && (
+          <ul className="absolute bg-white border rounded-lg w-full mt-1">
+            {destinationSuggestions.map((suggestion) => (
+              <li
+                key={suggestion.place_id}
+                onClick={() => {
+                  setDestination(suggestion.display_name);
+                  setDestinationSuggestions([]);
+                }}
+                className="p-2 cursor-pointer hover:bg-gray-200"
+              >
+                {suggestion.display_name}
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
 
       <button
         type="submit"
@@ -96,8 +152,10 @@ const BookRideForm = ({ setRoute }) => {
     </form>
   );
 };
+
 BookRideForm.propTypes = {
   setRoute: PropTypes.func.isRequired,
+  setShowRidePopup: PropTypes.func.isRequired,
 };
 
 export default BookRideForm;

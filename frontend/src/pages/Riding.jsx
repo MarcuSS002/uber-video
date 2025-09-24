@@ -34,17 +34,17 @@ const Riding = () => {
   }, [ride, socket, navigate]);
 
   return (
-    <div className="h-screen">
+    <div className="h-screen flex flex-col">
       {/* Home button */}
       <Link
         to="/home"
-        className="fixed right-2 top-2 h-10 w-10 bg-white flex items-center justify-center rounded-full"
+        className="fixed right-2 top-2 h-10 w-10 bg-white flex items-center justify-center rounded-full z-10"
       >
         <i className="text-lg font-medium ri-home-5-line"></i>
       </Link>
 
       {/* Map Section */}
-      <div className="h-1/2">
+      <div className="h-[70vh]">
         <LiveTracking
           pickup={ride?.pickupCoordinates} // { lat, lng }
           destination={ride?.destinationCoordinates} // { lat, lng }
@@ -53,7 +53,7 @@ const Riding = () => {
       </div>
 
       {/* Ride Info Section */}
-      <div className="h-1/2 p-4">
+      <div className="h-[30vh] p-4 bg-gray-100">
         <div className="flex items-center justify-between">
           <img
             className="h-12"

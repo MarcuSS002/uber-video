@@ -1,4 +1,4 @@
-import React from 'react'
+
 
 const VehiclePanel = (props) => {
     return (
@@ -46,5 +46,17 @@ const VehiclePanel = (props) => {
         </div>
     )
 }
+import PropTypes from 'prop-types';
 
-export default VehiclePanel
+VehiclePanel.propTypes = {
+  fare: PropTypes.shape({
+    car: PropTypes.number.isRequired,
+    moto: PropTypes.number.isRequired,
+    auto: PropTypes.number.isRequired,
+  }).isRequired,
+  setVehiclePanel: PropTypes.func.isRequired,
+  setConfirmRidePanel: PropTypes.func.isRequired,
+  selectVehicle: PropTypes.func.isRequired,
+};
+
+export default VehiclePanel;

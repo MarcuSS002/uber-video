@@ -8,24 +8,26 @@ function LiveTracking({ pickup, destination, captainLocation }) {
   const [routeCoords, setRouteCoords] = useState([]);
 
   useEffect(() => {
-    if (!pickup || !destination) return;
+    if (!pickup || !destination) {
+      setRouteCoords([]);
+      return;
+    }
 
-    // ✅ Fetch route from OSRM
     const fetchRoute = async () => {
       try {
         const url = `https://router.project-osrm.org/route/v1/driving/${pickup.lng},${pickup.lat};${destination.lng},${destination.lat}?geometries=geojson`;
         const res = await fetch(url);
         const data = await res.json();
 
-        if (data.routes?.[0]?.geometry?.coordinates) {
-          // OSRM gives [lng, lat] → convert to [lat, lng]
-          const coords = data.routes[0].geometry.coordinates.map(([lng, lat]) => [
-            lat,
-            lng,
-          ]);
+        if (data.routes && data.routes[0] && data.routes[0].geometry && data.routes[0].geometry.coordinates) {
+         
+          const coords = data.routes[0].geometry.coordinates.map(([lng, lat]) => [lat, lng]);
           setRouteCoords(coords);
+        } else {
+          setRouteCoords([]);
         }
       } catch (err) {
+        setRouteCoords([]);
         console.error("Error fetching OSRM route:", err);
       }
     };
@@ -37,7 +39,7 @@ function LiveTracking({ pickup, destination, captainLocation }) {
     <MapContainer
       center={pickup ? [pickup.lat, pickup.lng] : [28.6139, 77.209]} // fallback Delhi
       zoom={13}
-      style={{ height: "100%", width: "100%" }}
+      style={{ height: "65%", width: "100%" }}
     >
       {/* Base map */}
       <TileLayer
@@ -57,8 +59,8 @@ function LiveTracking({ pickup, destination, captainLocation }) {
       )}
 
       {/* Route polyline */}
-      {routeCoords.length > 0 && (
-        <Polyline positions={routeCoords} color="blue" />
+      {Array.isArray(routeCoords) && routeCoords.length > 1 && (
+        <Polyline positions={routeCoords} color="blue" key={routeCoords.map(c => c.join(",")).join("-")} />
       )}
     </MapContainer>
   );
