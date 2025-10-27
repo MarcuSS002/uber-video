@@ -1,22 +1,31 @@
-User UI
+🚕 Ultimate Ride-Hailing UI Showcase
+Experience next-level user and captain workflows, designed for clarity, speed, and seamless interaction—from destination search to ride acceptance.
 
-<img width="523" height="692" alt="Screenshot 2025-10-27 125344" src="https://github.com/user-attachments/assets/7abdf36d-0274-4884-9d8f-319c055e0b0b" />
+<img width="523" height="692" alt="Screenshot 2025-10-27 125344" src="https://github.com/user-attachments/assets/9b6e24d9-98d5-4a09-8bc0-1f03c6d9eab0" />
+<img width="517" height="694" alt="Screenshot 2025-10-27 125404" src="https://github.com/user-attachments/assets/756df9d4-af16-4de0-a639-733854345319" />
 
-Searching for Destination
-<img width="517" height="694" alt="Screenshot 2025-10-27 125404" src="https://github.com/user-attachments/assets/cf3ac127-1758-41dd-bcad-aada7c6620ec" />
+User Journey: Booking a Ride
+1. Searching for Destination
+Effortless input and rapid live suggestions for any location.
+<img width="524" height="684" alt="Screenshot 2025-10-27 125505" src="https://github.com/user-attachments/assets/1e108670-8004-4185-9064-fb458f01de76" />
 
-<img width="518" height="690" alt="Screenshot 2025-10-27 125428" src="https://github.com/user-attachments/assets/dd456b2a-a756-4eae-a8f5-2261c224364f" />
-Creating Ride
-<img width="524" height="684" alt="Screenshot 2025-10-27 125505" src="https://github.com/user-attachments/assets/f7c00ac0-1e51-4aa2-943b-533082f111c8" />
 
-<img width="526" height="692" alt="Screenshot 2025-10-27 125526" src="https://github.com/user-attachments/assets/f9f1015a-2084-46b3-ada8-baaf1d437823" />
 
-Captain UI
-<img width="524" height="692" alt="Screenshot 2025-10-27 125834" src="https://github.com/user-attachments/assets/054195b6-fc31-42e2-beaa-e418726f6ba6" />
-Accepting the Ride, Created by user
-<img width="518" height="690" alt="Screenshot 2025-10-27 130143" src="https://github.com/user-attachments/assets/a6345fed-7a6d-4f8f-87ce-cbf931a1b5d8" />
+3. Creating the Ride
+Clear route preview, fare, and ETA for every ride request.
+<img width="526" height="692" alt="Screenshot 2025-10-27 125526" src="https://github.com/user-attachments/assets/9ae481f3-21b0-4934-a52c-bdeac34a7b34" />
+<img width="519" height="689" alt="Screenshot 2025-10-27 125534" src="https://github.com/user-attachments/assets/aece1d49-9a22-4b3d-9485-a957fddb50ce" />
 
-Ride Accepted
-<img width="514" height="686" alt="Screenshot 2025-10-27 125859" src="https://github.com/user-attachments/assets/2c33bcd1-97e4-43e4-a527-19610737a33d" />
+
+
+Captain Journey: Fast, Reliable Acceptance
+3. Captain Incoming Request
+Detailed ride summary with instant accept/decline controls.
+<img width="524" height="692" alt="Screenshot 2025-10-27 125834" src="https://github.com/user-attachments/assets/76f26acc-4a4a-4a6c-874c-e43a27fb9768" />
+
+
+4. Ride Accepted
+Immediate confirmation & next steps.
+<img width="514" height="686" alt="Screenshot 2025-10-27 125859" src="https://github.com/user-attachments/assets/798f7617-6a2b-4085-bde2-477732558322" />
 
 
