@@ -27,4 +27,6 @@
 <h1>4. Ride Accepted</h1>
 <img width="524" height="692" alt="Screenshot 2025-10-27 125859" src="https://github.com/user-attachments/assets/798f7617-6a2b-4085-bde2-477732558322" />
 
+<hr/> <h2><p>Implementation Highlights</p></h2> <ul> <li>Maps: Autocomplete, route drawing, and live markers for rider and captain.</li> <li>Real-time: Low-latency updates for requests, accept/decline, and trip status.</li> <li>UX: Tap-minimizing flows, clear affordances, and accessible typography.</li> </ul>
+
 
